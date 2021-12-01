@@ -24,7 +24,7 @@ extension NewsAPI: APIBuilder {
     var baseURL: URL {
         switch self {
             case .getNews:
-                return URL(string: "https://api.lil.software")!
+                return URL(string: "https://news.lineengraver.com")!
             case .getLocalNews:
                 return URL(string: "http://10.0.1.2:5001")!
         }
@@ -42,7 +42,7 @@ extension NewsAPI: APIBuilder {
     var path: String {
         switch self {
         case .getNews:
-            return "/news"
+            return "/summary"
         case .getLocalNews:
             return "/summary"
         }

@@ -57,7 +57,6 @@ struct ArticleRowView: View {
                 HStack {
                     Text(article.title ?? "")
                         .font(.subheadline)
-                        .foregroundColor(Color.label)
                         .lineLimit(nil)
                         .multilineTextAlignment(.leading)
                 }
@@ -67,7 +66,6 @@ struct ArticleRowView: View {
                 HStack {
                     Text(article.source ?? "")
                         .font(.footnote)
-                        .foregroundColor(Color.lightText)
                         .multilineTextAlignment(.leading)
                     Spacer()
                 }

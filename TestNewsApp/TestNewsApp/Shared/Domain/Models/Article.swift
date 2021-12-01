@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Article
-struct Article: Codable, Identifiable {
+struct Article: Codable, Identifiable, Hashable {
     let id = UUID()
     let author: String?
     let url: String?

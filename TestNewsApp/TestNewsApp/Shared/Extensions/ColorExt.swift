@@ -24,6 +24,9 @@ public extension Color {
     static let tertiaryLabel = Color(UIColor.tertiaryLabel)
     static let quaternaryLabel = Color(UIColor.quaternaryLabel)
     
+    static let appPagerDotsColor = Color.white.opacity(0.2)
+    static let appPagerDotsActiveColor = Color.white
+    
     static let systemBackground = Color(UIColor.systemBackground)
     static let secondarySystemBackground = Color(UIColor.secondarySystemBackground)
     static let tertiarySystemBackground = Color(UIColor.tertiarySystemBackground)
@@ -43,6 +46,9 @@ public extension Color {
     static let secondaryLabel = Color(UIColor.secondaryLabel)
     static let tertiaryLabel = Color(UIColor.tertiaryLabel)
     static let quaternaryLabel = Color(UIColor.quaternaryLabel)
+    
+    static let appPagerDotsColor = Color.white.opacity(0.2)
+    static let appPagerDotsActiveColor = Color.white
     
     //static let systemBackground = Color.systemBackground
     //static let secondarySystemBackground = Color(UIColor.secondarySystemBackground)

@@ -40,34 +40,24 @@ struct ArticleDetailView: View {
                         }
                     }
                     .frame(maxWidth: .infinity)
-#if os(tvOS)
-                    .focusable()
-#endif
                 }
             }
-                
-                Text(article.title ?? "")
-                    .font(.headline)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color.label)
-                    .lineLimit(nil)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .padding(.top, 15)
-                
-                Text(article.articleDescription ?? "")
-                    .font(.body)
-                    .foregroundColor(Color.label)
-                    .lineLimit(nil)
-                    .multilineTextAlignment(.leading)
-                    .padding()
             
-#if os(tvOS)
-            Text(article.source ?? "")
-                .font(.subheadline)
-                .focusable()
-#else
+            Text(article.title ?? "")
+                .font(.headline)
+                .fontWeight(.bold)
+                .lineLimit(nil)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .padding(.top, 15)
+            
+            Text(article.articleDescription ?? "")
+                .font(.body)
+                .lineLimit(nil)
+                .multilineTextAlignment(.leading)
+                .padding()
+            
             Button(action: {
                 openArticle(url: article.url)
             },
@@ -75,19 +65,14 @@ struct ArticleDetailView: View {
                 Text(article.source ?? "")
                     .font(.subheadline)
             })
-#endif
             
-
-                
             Spacer()
-
+            
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
 #if os(iOS)
         .navigationTitle(article.title ?? "")
         .navigationBarTitleDisplayMode(.inline)
-#elseif os(tvOS)
-        
 #elseif os(macOS)
         .navigationTitle(article.title ?? "")
 #endif
@@ -95,18 +80,12 @@ struct ArticleDetailView: View {
     }
     
     func openArticle(url: String?) {
-            guard let link = url, let url = URL(string: link) else {
-                return
-            }
-            openURL(url)
+        guard let link = url, let url = URL(string: link) else {
+            return
         }
+        openURL(url)
+    }
 }
-
-/*
-    .padding(.top, 5)
-    .padding(.bottom, 5)
-    .padding(.trailing, 5)
-*/
 
 struct ArticleDetailView_Previews: PreviewProvider {
     static var previews: some View {

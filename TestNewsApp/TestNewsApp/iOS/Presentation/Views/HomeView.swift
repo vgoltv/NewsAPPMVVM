@@ -7,12 +7,19 @@
 
 import SwiftUI
 
+
+
 struct HomeView: View {
     
     @StateObject var viewModel = NewsViewModelImpl(service: NewsServiceImpl())
     
+    @State var isEmpty: Bool = false
+    @State var navigationViewIsActive: Bool = false
+    @State var selectedFeaturedArticle : Article? = nil
+    
     var body: some View {
-        Group {
+        
+        return Group {
             switch viewModel.state {
             case .loading:
                 ProgressView()
@@ -22,28 +29,30 @@ struct HomeView: View {
                 ErrorView(error: error, handler: viewModel.getArticles)
             case .success(let articles):
                 NavigationView {
-                    List(articles) { item in
-                        NavigationLink(destination: ArticleDetailView(article: item)) {
-                            ArticleRowView(article: item)
+                    List {
+                        ArticlesPager(articles: [articles[0], articles[1], articles[2]], onCardSelected: { articleItem, isSet in
+                            isEmpty = false
+                            navigationViewIsActive = isSet
+                            selectedFeaturedArticle = articleItem
+                        })
+                            .aspectRatio(3 / 2, contentMode: .fit)
+                            .listRowInsets(EdgeInsets())
+                        VStack {
+                            if let item = selectedFeaturedArticle {
+                                NavigationLink(destination: ArticleDetailView(article: item), isActive: $navigationViewIsActive){
+                                    EmptyView()
+                                }
+                            }
+                        }.hidden()
+                        
+                        ForEach(articles, id: \.self) {article in
+                            NavigationLink(destination: ArticleDetailView(article: article)) {
+                                ArticleRowView(article: article)
+                            }
                         }
+                        .listRowInsets(EdgeInsets())
                     }
-#if os(macOS)
-        .toolbar {
-            ToolbarItemGroup(placement: .automatic){
-                HStack{
-                    Spacer()
-                        .frame(width:30)
-                    Button(action: {
-                        URLCache.imageCache.removeAllCachedResponses()
-                        viewModel.getArticles()
-                    },
-                           label: { Image(systemName: "arrow.counterclockwise").imageScale(.large) })
-                        .buttonStyle(PlainButtonStyle())
-                }
-
-            }
-        }
-#endif
+                    
                     .padding(.leading,6)
                     .padding(.trailing,6)
                     .frame(minWidth: 200,
@@ -52,20 +61,16 @@ struct HomeView: View {
                            maxHeight: .infinity,
                            alignment: .topLeading)
                     
-#if os(iOS)
+                    
                     .navigationTitle(Text("News"))
                     .navigationBarTitleDisplayMode(.inline)
-#elseif os(tvOS)
-
-#elseif os(macOS)
-                    .navigationTitle(Text("News"))
-#endif
+                    
                     .frame(minWidth: 300)
                     .refreshable{
                         URLCache.imageCache.removeAllCachedResponses()
                         viewModel.getArticles()
                     }
-
+                    
                     // Second view for wide layouts
                     Text("Select an article")
                 }
@@ -73,8 +78,8 @@ struct HomeView: View {
             }
         }
         .onAppear(perform: viewModel.getArticles)
-
-
+        
+        
     }
     
 }
