@@ -27,17 +27,17 @@ struct HomeView: View {
             case .success(let articles):
                 NavigationView {
                     List{
-                        
-                        ArticlesPager(articles: [articles[0], articles[1], articles[2]], onCardSelected: { articleItem, isSet in
+                        let topNews = Array(articles.choose(3))
+                        ArticlesPager(articles: topNews, onCardSelected: { articleItem, isSet in
                             isEmpty = false
                             navigationViewIsActive = isSet
                             selectedFeaturedArticle = articleItem
                         })
                             .ignoresSafeArea(edges: .top)
                             .frame(maxWidth:.infinity)
-                            .frame(height: 350)
+                            .frame(height: 450)
                             .listRowInsets(EdgeInsets())
-                        
+
                         VStack {
                             if let item = selectedFeaturedArticle {
                                 NavigationLink(destination: ArticleDetailView(article: item), isActive: $navigationViewIsActive){
@@ -46,16 +46,31 @@ struct HomeView: View {
                             }
                         }.hidden()
                         
+                        let cw:CGFloat = 240
+                        let ch:CGFloat = 180
+                        
+                        let popular = Array(articles.choose(8))
+                        CategoryRow(name: "POPULAR", items: popular, thumbWidth: cw, thumbHeight: ch)
+                        
+                        let newest = Array(articles.choose(8))
+                        CategoryRow(name: "NEWEST", items: newest, thumbWidth: cw, thumbHeight: ch)
+                        
+                        let recent = Array(articles.choose(8))
+                        CategoryRow(name: "RECENT", items: recent, thumbWidth: cw, thumbHeight: ch)
+                        
+                        /*
                         ForEach(articles, id: \.self) {article in
                             NavigationLink(destination: ArticleDetailView(article: article)) {
                                 ArticleRowView(article: article)
                             }
                         }
                         .listRowInsets(EdgeInsets())
+                        */
                     }
+                    .ignoresSafeArea()
                     .frame(minWidth: 200,
                            maxWidth: .infinity,
-                           minHeight: 200,
+                           minHeight: 450,
                            maxHeight: .infinity,
                            alignment: .topLeading)
                     .frame(minWidth: 300)
