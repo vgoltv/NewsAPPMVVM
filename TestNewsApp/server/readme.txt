@@ -7,7 +7,7 @@ Setup for macOS:
 5 virtualenv venv
 6 . venv/bin/activate
 7 pip install Flask
-8 python news.py
+8 python __init__.py
 
 
 
@@ -17,7 +17,7 @@ Address to access from other devices in a workgroup will looks like 10.0.1.2:500
 
 start server (cd to folder) -
 . venv/bin/activate
-python news.py
+python __init__.py
 
 quit server - 
 Ctrl+C

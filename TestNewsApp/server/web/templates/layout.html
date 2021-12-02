@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>{{ title }}</title>
+    <meta charset="utf-8">
+    <meta name="description" content="{{ description }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png') }}"/>
+    <meta name="HandheldFriendly" content="True"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+    <meta name="theme-color" content="#5eb9d7"/>
+    
+    <!-- OG & Twitter metadata -->
+    <meta property="og:site_name" content="{{ title }}"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="{{ title }}"/>
+    <meta property="og:description" content="{{ description }}"/>
+    <meta property="og:url" content="https://news.lineengraver.com/"/>
+    <meta property="og:image" content="{{ url_for('static', filename='img/news@2x.jpg') }}"/>
+    <meta name="twitter:title" content="{{ title }}"/>
+    <meta name="twitter:description" content="{{ description }}"/>
+    <meta name="twitter:url" content="https://news.lineengraver.com/"/>
+    <meta name="twitter:site" content="@vgoltv"/>
+    <meta name="twitter:creator" content="@vgoltv"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:image" content="{{ url_for('static', filename='img/news@2x.jpg') }}"/>
+
+    {% block css %}{% endblock %}
+</head>
+
+<body>
+{% include 'navigation.html' %}
+{% block content %}{% endblock %}
+</body>
+
+</html>
