@@ -4,9 +4,6 @@ Sample project to learn how to use swiftui 2.0 with Combine, we look into using 
 
 
 ## Resources
-  
-Lil api
-https://lil.software/api/
 
 Postman
 https://www.postman.com
@@ -14,6 +11,5 @@ https://www.postman.com
 Quicktype
 https://app.quicktype.io
 
-URLImage
-https://github.com/dmytro-anokhin/url-image
-
+CachedAsyncImage
+https://github.com/lorenzofiamingo/SwiftUI-CachedAsyncImage

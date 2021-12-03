@@ -27,45 +27,60 @@ struct HomeView: View {
             case .success(let articles):
                 NavigationView {
                     List{
-                        let topNews = Array(articles.choose(3))
-                        ArticlesPager(articles: topNews, onCardSelected: { articleItem, isSet in
-                            isEmpty = false
-                            navigationViewIsActive = isSet
-                            selectedFeaturedArticle = articleItem
-                        })
-                            .ignoresSafeArea(edges: .top)
-                            .frame(maxWidth:.infinity)
-                            .frame(height: 450)
-                            .listRowInsets(EdgeInsets())
+                        if articles.count >= 9{
+                            let topNews = Array(articles.choose(3))
+                            ArticlesPager(articles: topNews, onCardSelected: { articleItem, isSet in
+                                isEmpty = false
+                                navigationViewIsActive = isSet
+                                selectedFeaturedArticle = articleItem
+                            })
+                                .ignoresSafeArea(edges: .top)
+                                .frame(maxWidth:.infinity)
+                                .frame(height: 450)
+                                .listRowInsets(EdgeInsets())
 
-                        VStack {
-                            if let item = selectedFeaturedArticle {
-                                NavigationLink(destination: ArticleDetailView(article: item), isActive: $navigationViewIsActive){
-                                    EmptyView()
+                            VStack {
+                                if let item = selectedFeaturedArticle {
+                                    NavigationLink(destination: ArticleDetailView(article: item), isActive: $navigationViewIsActive){
+                                        EmptyView()
+                                    }
                                 }
+                            }.hidden()
+                            
+                            let cw:CGFloat = 240
+                            let ch:CGFloat = 180
+                            
+                            let popular = Array(articles.choose(8))
+                            CategoryRow(name: "POPULAR", items: popular, thumbWidth: cw, thumbHeight: ch)
+                            
+                            let newest = Array(articles.choose(8))
+                            CategoryRow(name: "NEWEST", items: newest, thumbWidth: cw, thumbHeight: ch)
+                            
+                            let recent = Array(articles.choose(8))
+                            CategoryRow(name: "RECENT", items: recent, thumbWidth: cw, thumbHeight: ch)
+                        }else if articles.count > 0{
+                            
+                            if articles.count >= 5 {
+                                let topNews = Array(articles.choose(3))
+                                ArticlesPager(articles: topNews, onCardSelected: { articleItem, isSet in
+                                    isEmpty = false
+                                    navigationViewIsActive = isSet
+                                    selectedFeaturedArticle = articleItem
+                                })
+                                    .ignoresSafeArea(edges: .top)
+                                    .frame(maxWidth:.infinity)
+                                    .frame(height: 450)
+                                    .listRowInsets(EdgeInsets())
                             }
-                        }.hidden()
-                        
-                        let cw:CGFloat = 240
-                        let ch:CGFloat = 180
-                        
-                        let popular = Array(articles.choose(8))
-                        CategoryRow(name: "POPULAR", items: popular, thumbWidth: cw, thumbHeight: ch)
-                        
-                        let newest = Array(articles.choose(8))
-                        CategoryRow(name: "NEWEST", items: newest, thumbWidth: cw, thumbHeight: ch)
-                        
-                        let recent = Array(articles.choose(8))
-                        CategoryRow(name: "RECENT", items: recent, thumbWidth: cw, thumbHeight: ch)
-                        
-                        /*
-                        ForEach(articles, id: \.self) {article in
-                            NavigationLink(destination: ArticleDetailView(article: article)) {
-                                ArticleRowView(article: article)
-                            }
+
+                            
+                            let cw:CGFloat = 240
+                            let ch:CGFloat = 180
+                            
+                            CategoryRow(name: "RECENT", items: articles, thumbWidth: cw, thumbHeight: ch)
+                        } else {
+                            Text("List is empty")
                         }
-                        .listRowInsets(EdgeInsets())
-                        */
                     }
                     .ignoresSafeArea()
                     .frame(minWidth: 200,

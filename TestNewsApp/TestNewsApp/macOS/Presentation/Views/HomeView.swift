@@ -54,8 +54,11 @@ struct HomeView: View {
                     .navigationTitle(Text("News"))
                     .frame(minWidth: 300)
                     
-                    // Second view for wide layouts
-                    Text("Select an article")
+                    if articles.count > 0 {
+                        Text("Select an article")
+                    } else {
+                        Text("List is empty")
+                    }
                 }
                 
             }

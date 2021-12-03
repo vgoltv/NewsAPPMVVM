@@ -30,44 +30,45 @@ struct HomeView: View {
             case .success(let articles):
                 NavigationView {
                     List {
-                        let topNews = Array(articles.choose(3))
-                        ArticlesPager(articles: topNews, onCardSelected: { articleItem, isSet in
-                            isEmpty = false
-                            navigationViewIsActive = isSet
-                            selectedFeaturedArticle = articleItem
-                        })
-                            .aspectRatio(3 / 2, contentMode: .fit)
-                            .listRowInsets(EdgeInsets())
-                            .listRowSeparator(.hidden)
                         
-                        VStack {
-                            if let item = selectedFeaturedArticle {
-                                NavigationLink(destination: ArticleDetailView(article: item), isActive: $navigationViewIsActive){
-                                    EmptyView()
+                        if articles.count >= 9{
+                            let topNews = Array(articles.choose(3))
+                            ArticlesPager(articles: topNews, onCardSelected: { articleItem, isSet in
+                                isEmpty = false
+                                navigationViewIsActive = isSet
+                                selectedFeaturedArticle = articleItem
+                            })
+                                .aspectRatio(3 / 2, contentMode: .fit)
+                                .listRowInsets(EdgeInsets())
+                                .listRowSeparator(.hidden)
+                            
+                            VStack {
+                                if let item = selectedFeaturedArticle {
+                                    NavigationLink(destination: ArticleDetailView(article: item), isActive: $navigationViewIsActive){
+                                        EmptyView()
+                                    }
+                                }
+                            }.hidden()
+                            
+                            let popular = Array(articles.choose(8))
+                            CategoryRow(name: "POPULAR", items: popular, thumbWidth: 90, thumbHeight: 90)
+                                .listRowSeparator(.hidden)
+                            
+                            let newest = Array(articles.choose(8))
+                            CategoryRow(name: "NEWEST", items: newest, thumbWidth: 90, thumbHeight: 90)
+                                .listRowSeparator(.hidden)
+                            
+                            let recent = Array(articles.choose(8))
+                            CategoryRow(name: "RECENT", items: recent, thumbWidth: 90, thumbHeight: 90)
+                                .listRowSeparator(.hidden)
+                        } else{
+                            ForEach(articles, id: \.self) {article in
+                                NavigationLink(destination: ArticleDetailView(article: article)) {
+                                    ArticleRowView(article: article)
                                 }
                             }
-                        }.hidden()
-                        
-                        let popular = Array(articles.choose(8))
-                        CategoryRow(name: "POPULAR", items: popular, thumbWidth: 90, thumbHeight: 90)
-                            .listRowSeparator(.hidden)
-                        
-                        let newest = Array(articles.choose(8))
-                        CategoryRow(name: "NEWEST", items: newest, thumbWidth: 90, thumbHeight: 90)
-                            .listRowSeparator(.hidden)
-                        
-                        let recent = Array(articles.choose(8))
-                        CategoryRow(name: "RECENT", items: recent, thumbWidth: 90, thumbHeight: 90)
-                            .listRowSeparator(.hidden)
-                        
-                        /*
-                        ForEach(articles, id: \.self) {article in
-                            NavigationLink(destination: ArticleDetailView(article: article)) {
-                                ArticleRowView(article: article)
-                            }
+                            .listRowInsets(EdgeInsets())
                         }
-                        .listRowInsets(EdgeInsets())
-                        */
                     }
                     .frame(minWidth: 200,
                            maxWidth: .infinity,
@@ -81,7 +82,12 @@ struct HomeView: View {
                     }
                     
                     // Second view for wide layouts
-                    Text("Select an article")
+                    if articles.count > 0 {
+                        Text("Select an article")
+                    } else {
+                        Text("List is empty")
+                    }
+                    
                 }
                 
             }
