@@ -17,7 +17,7 @@ struct ArticleItemView: View {
     
     var body: some View {
         HStack {
-            if let imageURL = article.image, let url = URL(string: imageURL) {
+            if let imageURL = article.media, let url = URL(string: imageURL) {
                 CachedAsyncImage(
                     url: url, urlCache: .imageCache
                 ) { phase in

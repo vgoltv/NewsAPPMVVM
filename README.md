@@ -5,11 +5,12 @@ Sample project to learn how to use swiftui 2.0 with Combine, we look into using 
 
 ## Resources
 
-Postman
-https://www.postman.com
+Rapid API
+https://rapidapi.com/hub
 
-Quicktype
-https://app.quicktype.io
+NewsCatcher
+https://newscatcherapi.com
+https://rapidapi.com/newscatcher-api-newscatcher-api-default/api/free-news/
 
 CachedAsyncImage
 https://github.com/lorenzofiamingo/SwiftUI-CachedAsyncImage

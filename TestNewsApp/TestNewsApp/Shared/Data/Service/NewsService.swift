@@ -25,6 +25,27 @@ struct NewsServiceImpl: NewsService {
                 guard let response = response as? HTTPURLResponse else {
                     return Fail(error: APIError.unknown).eraseToAnyPublisher()
                 }
+                /*
+                do {
+                    let decoder = JSONDecoder()
+                    let messages = try decoder.decode(NewsResponse.self, from: data)
+                    print(messages as Any)
+                } catch DecodingError.dataCorrupted(let context) {
+                    print(context)
+                } catch DecodingError.keyNotFound(let key, let context) {
+                    print("Key '\(key)' not found:", context.debugDescription)
+                    print("codingPath:", context.codingPath)
+                } catch DecodingError.valueNotFound(let value, let context) {
+                    print("Value '\(value)' not found:", context.debugDescription)
+                    print("codingPath:", context.codingPath)
+                } catch DecodingError.typeMismatch(let type, let context) {
+                    print("Type '\(type)' mismatch:", context.debugDescription)
+                    print("codingPath:", context.codingPath)
+                } catch {
+                    print("error: ", error)
+                }
+                */
+                
                 if (200...299).contains(response.statusCode) {
                     let jsonDecoder = JSONDecoder()
                     jsonDecoder.dateDecodingStrategy = .iso8601
@@ -32,6 +53,7 @@ struct NewsServiceImpl: NewsService {
                         .decode(type: NewsResponse.self, decoder: jsonDecoder)
                         .mapError { _ in APIError.decodingError }
                         .eraseToAnyPublisher()
+                    
                 } else {
                     return Fail(error: APIError.errorCode(response.statusCode)).eraseToAnyPublisher()
                 }

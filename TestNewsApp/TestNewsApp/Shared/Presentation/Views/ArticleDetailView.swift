@@ -17,7 +17,7 @@ struct ArticleDetailView: View {
     
     var body: some View {
         ScrollView {
-            if let imageURL = article.image, let url = URL(string: imageURL) {
+            if let imageURL = article.media, let url = URL(string: imageURL) {
                 CachedAsyncImage(
                     url: url, urlCache: .imageCache
                 ) { phase in
@@ -52,17 +52,17 @@ struct ArticleDetailView: View {
                 .padding()
                 .padding(.top, 15)
             
-            Text(article.articleDescription ?? "")
+            Text(article.summary ?? "")
                 .font(.body)
                 .lineLimit(nil)
                 .multilineTextAlignment(.leading)
                 .padding()
             
             Button(action: {
-                openArticle(url: article.url)
+                openArticle(url: article.link)
             },
                    label: {
-                Text(article.source ?? "")
+                Text(article.cleanURL ?? "")
                     .font(.subheadline)
             })
             
@@ -84,12 +84,5 @@ struct ArticleDetailView: View {
             return
         }
         openURL(url)
-    }
-}
-
-struct ArticleDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        ArticleDetailView(article: Article.testArticle)
-            .previewLayout(.sizeThatFits)
     }
 }

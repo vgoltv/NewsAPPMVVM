@@ -16,7 +16,7 @@ struct FeatureCard: View, Identifiable {
     var body: some View {
         
         HStack(alignment:.center){
-            if let imageURL = article.image, let url = URL(string: imageURL) {
+            if let imageURL = article.media, let url = URL(string: imageURL) {
                 
                 CachedAsyncImage(
                     url: url, urlCache: .imageCache
@@ -71,14 +71,7 @@ struct FeatureCard: View, Identifiable {
                 }
             }
         }
-        
-        
-        /*
-        return article.featureImage?
-            .resizable()
-            .aspectRatio(3 / 2 , contentMode: .fit)
-            .overlay(TextOverlay(article: article, delegate:self))
-        */
+
     }
     
 }
@@ -105,7 +98,7 @@ struct TextOverlay : View {
                     .bold()
                     .padding(.bottom, 15)
                 */
-                Text(article.source ?? "")
+                Text(article.cleanURL ?? "")
                     .font(.footnote)
                     .padding(.bottom, 15)
                 

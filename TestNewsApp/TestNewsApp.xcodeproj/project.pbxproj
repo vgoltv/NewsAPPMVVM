@@ -643,7 +643,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fwkit.test.TestNewsApp;
 				PRODUCT_NAME = TestNewsApp;
 				SDKROOT = appletvos;
@@ -672,7 +672,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fwkit.test.TestNewsApp;
 				PRODUCT_NAME = TestNewsApp;
 				SDKROOT = appletvos;
@@ -706,7 +706,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fwkit.test.TestNewsApp;
 				PRODUCT_NAME = TestNewsApp;
 				SDKROOT = macosx;
@@ -739,7 +739,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fwkit.test.TestNewsApp;
 				PRODUCT_NAME = TestNewsApp;
 				SDKROOT = macosx;
@@ -881,6 +881,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fwkit.test.testnewsapp;
 				PRODUCT_NAME = TestNewsApp;
 				SWIFT_VERSION = 5.0;
@@ -903,6 +904,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fwkit.test.testnewsapp;
 				PRODUCT_NAME = TestNewsApp;
 				SWIFT_VERSION = 5.0;

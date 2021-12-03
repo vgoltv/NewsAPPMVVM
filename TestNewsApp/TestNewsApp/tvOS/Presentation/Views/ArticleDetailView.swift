@@ -19,7 +19,7 @@ struct ArticleDetailView: View {
         GeometryReader { metrics in
             HStack{
                 HStack(alignment:.center){
-                    if let imageURL = article.image, let url = URL(string: imageURL) {
+                    if let imageURL = article.media, let url = URL(string: imageURL) {
                         
                         CachedAsyncImage(
                             url: url, urlCache: .imageCache
@@ -73,7 +73,7 @@ struct ArticleDetailView: View {
                         .frame(maxWidth: .infinity)
                         .focusable()
                     
-                    let items = [article.articleDescription ?? "", article.source ?? ""]
+                    let items = [article.summary ?? "", article.link ?? ""]
                     
                     List(items, id: \.self) { item in
                         Text(item)
@@ -89,11 +89,4 @@ struct ArticleDetailView: View {
         
     }
     
-}
-
-struct ArticleDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        ArticleDetailView(article: Article.testArticle)
-            .previewLayout(.sizeThatFits)
-    }
 }

@@ -14,7 +14,7 @@ struct ArticleRowView: View {
     
     var body: some View {
         HStack {
-            if let imageURL = article.image, let url = URL(string: imageURL) {
+            if let imageURL = article.media, let url = URL(string: imageURL) {
                 CachedAsyncImage(
                     url: url, urlCache: .imageCache
                 ) { phase in
@@ -64,7 +64,7 @@ struct ArticleRowView: View {
                 Spacer()
                 
                 HStack {
-                    Text(article.source ?? "")
+                    Text(article.cleanURL ?? "")
                         .font(.footnote)
                         .multilineTextAlignment(.leading)
                     Spacer()
@@ -81,9 +81,4 @@ struct ArticleRowView: View {
     
 }
 
-struct ArticleRowView_Previews: PreviewProvider {
-    static var previews: some View {
-        ArticleRowView(article: Article.testArticle)
-            .previewLayout(.sizeThatFits)
-    }
-}
+

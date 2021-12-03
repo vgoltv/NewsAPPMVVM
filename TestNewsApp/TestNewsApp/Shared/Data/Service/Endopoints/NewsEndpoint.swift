@@ -42,9 +42,9 @@ extension NewsAPI: APIBuilder {
     var path: String {
         switch self {
         case .getNews:
-            return "/digest/1.0/_/en/0/"
+            return "/digest/1.1/_/en/0/"
         case .getLocalNews:
-            return "/digest/1.0/_/en/0/"
+            return "/dummy/1.1/_/en/0/"
         }
     }
 }

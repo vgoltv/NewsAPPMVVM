@@ -9,32 +9,44 @@ import Foundation
 
 // MARK: - Article
 struct Article: Codable, Identifiable, Hashable {
-    let id = UUID()
-    let author: String?
-    let url: String?
-    let source: String?
-    let title: String?
-    let articleDescription: String?
-    let image: String?
-    let date: Date
-
-    enum CodingKeys: String, CodingKey {
-        case author, url, source, title
-        case articleDescription = "description"
-        case image, date
-    }
+  let id = UUID()
+  
+  let rights: String?
+  let author: String?
+  let isOpinion: Bool?
+  let score: Float?
+  let sourceID: String?
+  let authors: [String]?
+  let cleanURL: String?
+  let link: String?
+  let publishedDatePrecision: String?
+  let rank: Int?
+  let language: String?
+  let summary: String?
+  let publishedDate: String?
+  let media: String?
+  let title: String?
+  let country: String?
+  let topic: String?
+  let twitterAccount: String?
+  
+  enum CodingKeys: String, CodingKey {
+    
+    case rights, author
+    case isOpinion = "is_opinion"
+    case score = "_score"
+    case sourceID = "_id"
+    case authors
+    case cleanURL = "clean_url"
+    case link
+    case publishedDatePrecision = "published_date_precision"
+    case rank
+    case language, summary
+    case publishedDate = "published_date"
+    case media, title, country, topic
+    case twitterAccount = "twitter_account"
+  }
 }
 
 
-extension Article {
-    static var testArticle: Article {
-        .init(author: "Hanna Ziady, CNN Business",
-              url: "https://www.cnn.com/2021/06/01/business/naomi-osaka-nike-sponsors/index.html",
-              source: "CNN",
-              title: "Nike backs Naomi Osaka after she withdraws from French Open - CNN",
-              articleDescription: "Nike and other major sponsors have come out in support of tennis star Naomi Osaka following her decision to withdraw from the French Open.",
-              image: "https://cdn.cnn.com/cnnnext/dam/assets/210601060832-naomi-osaka-0526-restricted-super-tease.jpg",
-              date: Date())
-    }
-}
 

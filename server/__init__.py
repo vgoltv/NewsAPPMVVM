@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-from flask import Flask
-from flask import jsonify
-from flask import request
-from flask import render_template
+from flask import Flask, jsonify, json, request, render_template
 import socket
+import http.client
 
 app = Flask(__name__,
         static_url_path='', 
@@ -11,6 +9,12 @@ app = Flask(__name__,
         template_folder='web/templates')
     
 app.config.from_pyfile('config.py')
+
+
+def to_pretty_json(value):
+        return json.dumps(value, sort_keys=True, indent=4, separators=(',', ': '))
+    
+app.jinja_env.filters['tojson_pretty'] = to_pretty_json
 
 @app.route("/")
 def home():
@@ -37,21 +41,108 @@ def summary():
         template_file,
         ip_address=ip_address,
     )
-
+    
 @app.route('/digest/<string:version>/<string:phrase>/<string:lang>/<int:page>/', methods=['GET', 'POST'])
 def digest(version, phrase, lang, page):
-    null = ""
     ip_address = request.host_url
     
-    template_file = "news/default.json"
+    if version == "1.0":
+        return render_template(
+            "news/1_0.json",
+            ip_address=ip_address,
+        )
+    elif version == "1.1":
+        print("allowed version")
+    else:
+        return render_template(
+            "news/default.json",
+            ip_address=ip_address,
+        )
+        
+    addr = app.config['CONNECTION_ADDR']
+    host = app.config['HEADER_HOST']
+    key = app.config['HEADER_KEY']
+    
+    headers = {
+        'x-rapidapi-host': host,
+        'x-rapidapi-key': key
+        }
+    
+    lng = lang.lower()
+    rlng = "en"
+    if lng in app.config['ALLOWED_LANG']:
+        rlng = lng
+    
+    try:
+        conn = http.client.HTTPSConnection(addr)
+        conn.request("GET", "/v1/search?q=Movie&lang="+rlng, headers=headers)
+    except Exception as e:
+        print(e)
+        conn.close()
+        return render_template(
+            "news/default.json",
+            ip_address=ip_address,
+        )
+    
+    res = conn.getresponse()
+    data = res.read()
+    
+    data_decoded = data.decode()
+    json_object = json.loads(data_decoded)
+    
+    try:
+        status = json_object["status"]
+    except KeyError:
+        conn.close()
+        return render_template(
+            "news/default.json",
+            ip_address=ip_address,
+        )
+        
+    try:
+        articles = json_object["articles"]
+    except KeyError:
+        conn.close()
+        return render_template(
+            "news/default.json",
+            ip_address=ip_address,
+        )
+        
+    conn.close()
+    
+    result_success = "false"
+    if res.status == 200 and status == "ok" :
+        print("success request")
+    else:
+        return render_template(
+            "news/default.json",
+            ip_address=ip_address,
+        )
+        
+    return render_template(
+            "news/1_1.json",
+            articles = articles,
+        )
+        
+@app.route('/dummy/<string:version>/<string:phrase>/<string:lang>/<int:page>/', methods=['GET', 'POST'])
+def dummy(version, phrase, lang, page):
+    ip_address = request.host_url
     
     if version == "1.0":
-        template_file = "news/1_0.json"
+        return render_template(
+            "news/1_0.json",
+            ip_address=ip_address,
+        )
+    elif version == "1.1":
+        print("allowed version")
     else:
-        template_file = "news/default.json"
+        return render_template(
+            "news/default.json",
+            ip_address=ip_address,
+        )
     
     return render_template(
-        template_file,
+        "news/1_1_dummy.json",
         ip_address=ip_address,
     )
 
