@@ -14,17 +14,42 @@ app.config.from_pyfile('config.py')
 def to_pretty_json(value):
         return json.dumps(value, sort_keys=True, indent=4, separators=(',', ': '))
     
+def page_forbidden(e):
+    return render_template(
+        "home.html",
+        nav=app.config['NAV'],
+        title="Error 403",
+        description="Forbidden",
+    ), 403
+    
+def page_not_found(e):
+    return render_template(
+        "home.html",
+        nav=app.config['NAV'],
+        title="Error 404",
+        description="What you were looking for is just not there.",
+    ), 404
+    
+def internal_server_error(e):
+    return render_template(
+        "home.html",
+        nav=app.config['NAV'],
+        title="Error 500",
+        description="Internal Server Error",
+    ), 500
+
+    
 app.jinja_env.filters['tojson_pretty'] = to_pretty_json
+app.register_error_handler(403, page_forbidden)
+app.register_error_handler(404, page_not_found)
+app.register_error_handler(500, internal_server_error)
 
 @app.route("/")
 def home():
     """Landing page route."""
-    nav = [
-        {"name": "Github project", "url": "https://github.com/vgoltv/NewsAPPMVVM"},
-    ]
     return render_template(
         "home.html",
-        nav=nav,
+        nav=app.config['NAV'],
         title="NewsAPPMVVM",
         description="Sample project to learn how to use swiftui 2.0 with Combine, we look into using SwiftUI MVVM, also interact with an API to get our newsfeed, use SPM(Swift Package Manager) to speed up our development flow and handle swiftui layout with views such as VStack.",
     )
@@ -75,7 +100,7 @@ def digest(version, phrase, lang, page):
     
     try:
         conn = http.client.HTTPSConnection(addr)
-        conn.request("GET", "/v1/search?q=Movie&lang="+rlng, headers=headers)
+        conn.request("GET", "/v1/search?q=SpaceX&lang="+rlng, headers=headers)
     except Exception as e:
         print(e)
         conn.close()
@@ -147,4 +172,4 @@ def dummy(version, phrase, lang, page):
     )
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=app.config['APP_PORT'])
+    app.run(host='0.0.0.0', port=app.config['APP_PORT'], debug=app.config['DEBUG'])
