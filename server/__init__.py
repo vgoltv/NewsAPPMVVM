@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, jsonify, json, request, render_template
+from flask_caching import Cache
 import socket
 import http.client
 
@@ -44,7 +45,10 @@ app.register_error_handler(403, page_forbidden)
 app.register_error_handler(404, page_not_found)
 app.register_error_handler(500, internal_server_error)
 
+cache = Cache(app)
+
 @app.route("/")
+@cache.cached(timeout=50)
 def home():
     """Landing page route."""
     return render_template(
@@ -56,6 +60,7 @@ def home():
     
 #to be compatible with version 1.0
 @app.route("/summary/")
+@cache.cached(timeout=50)
 def summary():
     null = ""
     ip_address = request.host_url
@@ -95,12 +100,22 @@ def digest(version, phrase, lang, page):
     
     lng = lang.lower()
     rlng = "en"
+    search_phrase = "SpaceX"
     if lng in app.config['ALLOWED_LANG']:
         rlng = lng
+        
+    cache_key = "articles"+"_"+search_phrase+"_"+rlng
+    cached_articles = cache.get(cache_key)
+    if cached_articles is not None:
+        print("found cached articles")
+        return render_template(
+                "news/1_1.json",
+                articles = cached_articles,
+            )
     
     try:
         conn = http.client.HTTPSConnection(addr)
-        conn.request("GET", "/v1/search?q=SpaceX&lang="+rlng, headers=headers)
+        conn.request("GET", "/v1/search?q="+search_phrase+"&lang="+rlng, headers=headers)
     except Exception as e:
         print(e)
         conn.close()
@@ -138,6 +153,8 @@ def digest(version, phrase, lang, page):
     result_success = "false"
     if res.status == 200 and status == "ok" :
         print("success request")
+        if articles is not None:
+            cache.set(cache_key, articles)
     else:
         return render_template(
             "news/default.json",

@@ -7,7 +7,8 @@ Setup for macOS:
 5 virtualenv venv
 6 . venv/bin/activate
 7 pip install Flask
-8 python __init__.py
+8 pip install Flask-Caching
+9 python __init__.py
 
 
 
