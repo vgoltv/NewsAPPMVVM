@@ -48,7 +48,7 @@ app.register_error_handler(500, internal_server_error)
 cache = Cache(app)
 
 @app.route("/")
-@cache.cached(timeout=50)
+@cache.cached(timeout=600)
 def home():
     """Landing page route."""
     return render_template(
@@ -60,35 +60,18 @@ def home():
     
 #to be compatible with version 1.0
 @app.route("/summary/")
-@cache.cached(timeout=50)
 def summary():
-    null = ""
-    ip_address = request.host_url
-    
-    template_file = "news/1_0.json"
-        
-    return render_template(
-        template_file,
-        ip_address=ip_address,
-    )
+    return dummy_1_0_json()
     
 @app.route('/digest/<string:version>/<string:phrase>/<string:lang>/<int:page>/', methods=['GET', 'POST'])
 def digest(version, phrase, lang, page):
-    ip_address = request.host_url
-    
     if version == "1.0":
-        return render_template(
-            "news/1_0.json",
-            ip_address=ip_address,
-        )
+        return dummy_1_0_json()
     elif version == "1.1":
         print("allowed version")
     else:
-        return render_template(
-            "news/default.json",
-            ip_address=ip_address,
-        )
-        
+        return empty_json()
+    
     addr = app.config['CONNECTION_ADDR']
     host = app.config['HEADER_HOST']
     key = app.config['HEADER_KEY']
@@ -107,7 +90,6 @@ def digest(version, phrase, lang, page):
     cache_key = "articles"+"_"+search_phrase+"_"+rlng
     cached_articles = cache.get(cache_key)
     if cached_articles is not None:
-        print("found cached articles")
         return render_template(
                 "news/1_1.json",
                 articles = cached_articles,
@@ -119,10 +101,7 @@ def digest(version, phrase, lang, page):
     except Exception as e:
         print(e)
         conn.close()
-        return render_template(
-            "news/default.json",
-            ip_address=ip_address,
-        )
+        return empty_json()
     
     res = conn.getresponse()
     data = res.read()
@@ -134,32 +113,21 @@ def digest(version, phrase, lang, page):
         status = json_object["status"]
     except KeyError:
         conn.close()
-        return render_template(
-            "news/default.json",
-            ip_address=ip_address,
-        )
+        return empty_json()
         
     try:
         articles = json_object["articles"]
     except KeyError:
         conn.close()
-        return render_template(
-            "news/default.json",
-            ip_address=ip_address,
-        )
+        return empty_json()
         
     conn.close()
     
-    result_success = "false"
     if res.status == 200 and status == "ok" :
-        print("success request")
         if articles is not None:
             cache.set(cache_key, articles)
     else:
-        return render_template(
-            "news/default.json",
-            ip_address=ip_address,
-        )
+        return empty_json()
         
     return render_template(
             "news/1_1.json",
@@ -168,25 +136,34 @@ def digest(version, phrase, lang, page):
         
 @app.route('/dummy/<string:version>/<string:phrase>/<string:lang>/<int:page>/', methods=['GET', 'POST'])
 def dummy(version, phrase, lang, page):
-    ip_address = request.host_url
-    
     if version == "1.0":
-        return render_template(
-            "news/1_0.json",
-            ip_address=ip_address,
-        )
+        return dummy_1_0_json()
     elif version == "1.1":
-        print("allowed version")
-    else:
-        return render_template(
-            "news/default.json",
-            ip_address=ip_address,
-        )
+        return dummy_1_1_json()
     
+    return empty_json()
+
+@cache.cached(timeout=1200, key_prefix='empty_json')
+def empty_json():
+    return render_template(
+        "news/default.json",
+        ip_address=request.host_url,
+    )
+    
+@cache.cached(timeout=1200, key_prefix='dummy_1_0_json')
+def dummy_1_0_json():
+    return render_template(
+        "news/1_0.json",
+        ip_address=request.host_url,
+    )
+    
+@cache.cached(timeout=1200, key_prefix='dummy_1_1_json')
+def dummy_1_1_json():
     return render_template(
         "news/1_1_dummy.json",
-        ip_address=ip_address,
+        ip_address=request.host_url,
     )
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=app.config['APP_PORT'], debug=app.config['DEBUG'])
