@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, jsonify, json, request, render_template
 from flask_caching import Cache
-import socket
-import http.client
+from utils.newshub import Newshub
+from apscheduler.schedulers.background import BackgroundScheduler
+
 
 app = Flask(__name__,
         static_url_path='', 
@@ -46,6 +47,18 @@ app.register_error_handler(404, page_not_found)
 app.register_error_handler(500, internal_server_error)
 
 cache = Cache(app)
+with app.app_context():
+    cache.clear()
+    
+newshub = Newshub(app.config)
+
+def news_harvester(hub, cache, phrase, lang):
+    hub.harvest(cache, phrase, lang)
+    
+sched = BackgroundScheduler(daemon=True)
+harvester_tick = app.config['CACHE_DEFAULT_TIMEOUT']
+sched.add_job(news_harvester,'interval', seconds=harvester_tick, args=[newshub, cache, "SpaceX", "en"])
+sched.start()
 
 @app.route("/")
 @cache.cached(timeout=600)
@@ -72,15 +85,6 @@ def digest(version, phrase, lang, page):
     else:
         return empty_json()
     
-    addr = app.config['CONNECTION_ADDR']
-    host = app.config['HEADER_HOST']
-    key = app.config['HEADER_KEY']
-    
-    headers = {
-        'x-rapidapi-host': host,
-        'x-rapidapi-key': key
-        }
-    
     lng = lang.lower()
     rlng = "en"
     search_phrase = "SpaceX"
@@ -94,45 +98,15 @@ def digest(version, phrase, lang, page):
                 "news/1_1.json",
                 articles = cached_articles,
             )
-    
-    try:
-        conn = http.client.HTTPSConnection(addr)
-        conn.request("GET", "/v1/search?q="+search_phrase+"&lang="+rlng, headers=headers)
-    except Exception as e:
-        print(e)
-        conn.close()
-        return empty_json()
-    
-    res = conn.getresponse()
-    data = res.read()
-    
-    data_decoded = data.decode()
-    json_object = json.loads(data_decoded)
-    
-    try:
-        status = json_object["status"]
-    except KeyError:
-        conn.close()
-        return empty_json()
-        
-    try:
-        articles = json_object["articles"]
-    except KeyError:
-        conn.close()
-        return empty_json()
-        
-    conn.close()
-    
-    if res.status == 200 and status == "ok" :
-        if articles is not None:
-            cache.set(cache_key, articles)
-    else:
-        return empty_json()
-        
-    return render_template(
-            "news/1_1.json",
-            articles = articles,
-        )
+            
+    articles = newshub.harvest(cache, "SpaceX", rlng)
+    if articles is not None:
+        return render_template(
+                "news/1_1.json",
+                articles = articles,
+            )
+            
+    return empty_json()
         
 @app.route('/dummy/<string:version>/<string:phrase>/<string:lang>/<int:page>/', methods=['GET', 'POST'])
 def dummy(version, phrase, lang, page):
@@ -163,6 +137,8 @@ def dummy_1_1_json():
         "news/1_1_dummy.json",
         ip_address=request.host_url,
     )
+    
+
 
 
 if __name__ == '__main__':

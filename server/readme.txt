@@ -8,7 +8,8 @@ Setup for macOS:
 6 . venv/bin/activate
 7 pip install Flask
 8 pip install Flask-Caching
-9 python __init__.py
+9 pip install flask_apscheduler
+10 python __init__.py
 
 
 
