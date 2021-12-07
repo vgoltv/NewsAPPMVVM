@@ -74,7 +74,7 @@ def home():
 #to be compatible with version 1.0
 @app.route("/summary/")
 def summary():
-    return dummy_1_0_json()
+    return dummy_1_0_json(),200,{'content-type':'application/json'}
     
 @app.route('/digest/<string:version>/<string:phrase>/<string:lang>/<int:page>/', methods=['GET', 'POST'])
 def digest(version, phrase, lang, page):
@@ -97,25 +97,25 @@ def digest(version, phrase, lang, page):
         return render_template(
                 "news/1_1.json",
                 articles = cached_articles,
-            )
+            ),200,{'content-type':'application/json'}
             
     articles = newshub.harvest(cache, "SpaceX", rlng)
     if articles is not None:
         return render_template(
                 "news/1_1.json",
                 articles = articles,
-            )
+            ),200,{'content-type':'application/json'}
             
-    return empty_json()
+    return empty_json(),200,{'content-type':'application/json'}
         
 @app.route('/dummy/<string:version>/<string:phrase>/<string:lang>/<int:page>/', methods=['GET', 'POST'])
 def dummy(version, phrase, lang, page):
     if version == "1.0":
-        return dummy_1_0_json()
+        return dummy_1_0_json(),200,{'content-type':'application/json'}
     elif version == "1.1":
-        return dummy_1_1_json()
+        return dummy_1_1_json(),200,{'content-type':'application/json'}
     
-    return empty_json()
+    return empty_json(),200,{'content-type':'application/json'}
 
 @cache.cached(timeout=1200, key_prefix='empty_json')
 def empty_json():
