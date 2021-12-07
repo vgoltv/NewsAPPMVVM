@@ -9,7 +9,8 @@ Setup for macOS:
 7 pip install Flask
 8 pip install Flask-Caching
 9 pip install flask_apscheduler
-10 python __init__.py
+10 pip install feedparser
+11 python __init__.py
 
 
 

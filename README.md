@@ -5,12 +5,5 @@ Sample project to learn how to use swiftui 2.0 with Combine, we look into using 
 
 ## Resources
 
-Rapid API
-https://rapidapi.com/hub
-
-NewsCatcher
-https://newscatcherapi.com
-https://rapidapi.com/newscatcher-api-newscatcher-api-default/api/free-news/
-
 CachedAsyncImage
 https://github.com/lorenzofiamingo/SwiftUI-CachedAsyncImage

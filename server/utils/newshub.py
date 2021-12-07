@@ -1,61 +1,96 @@
 # -*- coding: utf-8 -*-
 import json
 from flask_caching import Cache
-import http.client
+import feedparser
+import html.parser
+import re
+
+class HTMLTextExtractor(html.parser.HTMLParser):
+	def __init__(self):
+		super(HTMLTextExtractor, self).__init__()
+		self.result = [ ]
+		
+	def handle_data(self, d):
+		self.result.append(d)
+		
+	def get_text(self):
+		return ''.join(self.result)
 
 class Newshub:
 	def __init__(self, config):
 		self.addr = config['CONNECTION_ADDR']
-		host = config['HEADER_HOST']
-		key = config['HEADER_KEY']
-		self.headers = {
-			'x-rapidapi-host': host,
-			'x-rapidapi-key': key
-			}
+		self.connection_name = config['CONNECTION_NAME']
 			
 	@staticmethod
 	def method(arg):
 		print(arg)
-			
-	def harvest(self, cache, phrase, lang):
-		cache_key = "articles"+"_"+phrase+"_"+lang
+	
+	def parsefeed(self, cache, lang):
+		cache_key = "articles"+"_"+lang
 		cached_articles = cache.get(cache_key)
 		if cached_articles is not None:
-			return None
-		try:
-			conn = http.client.HTTPSConnection(self.addr)
-			conn.request("GET", "/v1/search?q="+phrase+"&lang="+lang, headers=self.headers)
-		except Exception as e:
-			print(e)
-			conn.close()
-			return None
-		res = conn.getresponse()
-		data = res.read()
+			return cached_articles
+		full_data = feedparser.parse(self.addr)
+		articles = []
 		
-		data_decoded = data.decode()
-		json_object = json.loads(data_decoded)
+		pattern = re.compile('([^\s\w]|_)+')
 		
-		try:
-			status = json_object["status"]
-		except KeyError:
-			conn.close()
-			return None
-		
-		try:
-			articles = json_object["articles"]
-		except KeyError:
-			conn.close()
-			return None
-		
-		conn.close()
-		
-		if res.status == 200 and status == "ok" :
-			if articles is not None:
-				cache.set(cache_key, articles)
-				print("articles saved!")
-				return articles
-
-		return None
+		for entry in full_data["entries"]:
+			try:
+				
+				media_ref = ""
+				
+				# RSS Featured Image plugin for WP
+				# Author: Jordy Meow
+				for media in entry.media_content:
+					if media['medium'] == 'image':
+						media_ref = media['url']
+						break
+					
+				summary = entry.summary
+				
+				for item in entry.content:
+					if item.type == 'text/html' and item.value is not None:
+						s = HTMLTextExtractor()
+						s.feed(item.value)
+						summary = s.get_text().strip()
+						summary = summary.replace(u"\u00A0", " ")
+						break
+					
+				
+				article = {
+					"title":entry.title,
+					"author":entry.author,
+					"published_date":entry.published,
+					"published_date_precision":"full",
+					"link":entry.link,
+					"clean_url":self.connection_name,
+					"summary":summary,
+					"rights":"",
+					"rank":10,
+					"topic":"news",
+					"country":"DE",
+					"language":"en",
+					"authors":[entry.author],
+					"media":str(media_ref),
+					"is_opinion":False,
+					"twitter_account":"",
+					"_score":10,
+					"_id":entry.id
+				}
+				
+				articles.append(article)
+			except Exception:
+				print("ERROR: Failed to parse Entry")
+				
+		json_object = json.dumps(articles, indent = 4) 
+		cache.set(cache_key, articles)
+		return articles
+	
+	def html_to_text(self, html):
+		s = HTMLTextExtractor()
+		s.feed(html)
+		return s.get_text()
 		
 	def to_json(self):
 		'''

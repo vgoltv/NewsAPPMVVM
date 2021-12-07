@@ -52,12 +52,12 @@ with app.app_context():
     
 newshub = Newshub(app.config)
 
-def news_harvester(hub, cache, phrase, lang):
-    hub.harvest(cache, phrase, lang)
+def news_harvester(hub, cache, lang):
+    hub.parsefeed(cache, lang)
     
 sched = BackgroundScheduler(daemon=True)
 harvester_tick = app.config['CACHE_DEFAULT_TIMEOUT']
-sched.add_job(news_harvester,'interval', seconds=harvester_tick, args=[newshub, cache, "SpaceX", "en"])
+sched.add_job(news_harvester,'interval', seconds=harvester_tick, args=[newshub, cache, "en"])
 sched.start()
 
 @app.route("/")
@@ -87,11 +87,10 @@ def digest(version, phrase, lang, page):
     
     lng = lang.lower()
     rlng = "en"
-    search_phrase = "SpaceX"
     if lng in app.config['ALLOWED_LANG']:
         rlng = lng
         
-    cache_key = "articles"+"_"+search_phrase+"_"+rlng
+    cache_key = "articles"+"_"+rlng
     cached_articles = cache.get(cache_key)
     if cached_articles is not None:
         return render_template(
@@ -99,7 +98,7 @@ def digest(version, phrase, lang, page):
                 articles = cached_articles,
             ),200,{'content-type':'application/json'}
             
-    articles = newshub.harvest(cache, "SpaceX", rlng)
+    articles = newshub.parsefeed(cache, rlng)
     if articles is not None:
         return render_template(
                 "news/1_1.json",
