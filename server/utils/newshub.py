@@ -30,6 +30,7 @@ class Newshub:
 		cached_articles = cache.get(cache_key)
 		if cached_articles is not None:
 			return cached_articles
+		
 		full_data = feedparser.parse(self.addr)
 		articles = []
 		
@@ -83,14 +84,8 @@ class Newshub:
 			except Exception:
 				print("ERROR: Failed to parse Entry")
 				
-		json_object = json.dumps(articles, indent = 4) 
 		cache.set(cache_key, articles)
 		return articles
-	
-	def html_to_text(self, html):
-		s = HTMLTextExtractor()
-		s.feed(html)
-		return s.get_text()
 		
 	def to_json(self):
 		'''

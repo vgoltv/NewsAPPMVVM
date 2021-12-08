@@ -1,4 +1,0 @@
-
-{
-"articles": {{ articles|tojson_pretty|safe }}
-}
