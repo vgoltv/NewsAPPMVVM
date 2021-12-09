@@ -1,0 +1,6 @@
+Flask
+Flask-Caching
+flask_apscheduler
+feedparser
+flask-sqlalchemy
+flask-restful

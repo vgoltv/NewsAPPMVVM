@@ -119,7 +119,6 @@ def empty_json():
 def dummy_1_1_json():
     return render_template(
         "news/1_1_dummy.json",
-        ip_address=request.host_url,
     )
 
 

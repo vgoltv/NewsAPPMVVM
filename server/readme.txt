@@ -6,11 +6,8 @@ Setup for macOS:
 4 cd to this folder
 5 virtualenv venv
 6 . venv/bin/activate
-7 pip install Flask
-8 pip install Flask-Caching
-9 pip install flask_apscheduler
-10 pip install feedparser
-11 python __init__.py
+7 pip install -r requirements.txt
+8 python __init__.py
 
 
 
